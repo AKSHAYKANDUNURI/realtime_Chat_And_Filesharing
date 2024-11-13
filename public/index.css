@@ -1,0 +1,160 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://www.pixsavor.com/uploads/large/4k/4k-mountains-nature.jpg'); /* Replace with your image URL */
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-position: center center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+    overflow: hidden; /* Prevents scrolling */
+  }
+  
+  .chat-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.427);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Fixed alignment */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust to truly center it */
+  }
+  
+.left-section {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.right-section {
+  flex: 2;
+}
+
+h2 {
+  text-align: center;
+  color: #ff0000;
+  margin-bottom: 20px;
+  font-size: 40px;
+}
+
+/* Username Section */
+#setUsername {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#fileInput{
+    border: 1px solid #cccccc;
+    background-color: #cccccca2;
+    margin-bottom: 2px;
+}
+
+#usernameInput {
+  padding: 10px;
+  width: 200px;
+  border-radius: 5px;
+  margin-right: 10px;
+  border: 1px solid #cccccc;
+  background-color: #cccccca2}
+
+#setUsernameButton {
+  padding: 10px 20px;
+  background-color: #2a8536;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#setUsernameButton:hover {
+  background-color: #45a049;
+}
+
+#setUsernameButton:active {
+  background-color: #388e3c;
+}
+
+/* User List */
+#users, #messages {
+  list-style-type: none;
+  margin-bottom: 10px;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #797676c5;
+  border-radius: 5px;
+  background-color: #cccccc41;
+}
+
+#users option, #messages li {
+  padding: 3px;
+  margin: 5px 0;
+  background: #cccccc3e;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+#messages {
+  height: 100%;
+}
+
+#users option:hover, #messages li:hover {
+  background: #cccccc40;
+}
+
+#users option {
+  cursor: pointer;
+}
+
+/* Message Input */
+#privateUser, #privateInput, #broadcastInput, #fileRecipient {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  background-color: #cccccca2;
+  margin-bottom: 10px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 3px;
+  background-color: #007bffbe;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:active {
+  background-color: #004085;
+}
+
+/* File Upload */
+.file-upload input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

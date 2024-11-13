@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time Chat with File Sharing</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="chat-container">
+    <div class="left-section">
+      <h2>Peer Talk</h2>
+
+      <div id="setUsername">
+        <input id="usernameInput" placeholder="Enter your username" />
+        <button id="setUsernameButton">Set Username</button>
+      </div>
+
+      <h3>Connected Users:</h3>
+      <ul id="users"></ul>
+
+      <div class="file-upload">
+        <div id="fileSharing">
+          <input type="file" id="fileInput" />
+          <input id="fileRecipient" placeholder="Recipient Username (leave blank for broadcast)" />
+          <button class="sendPrivate" id="sendFile">Send File</button>
+        </div>
+      </div>
+
+      <div id="privateMessage">
+        <input id="privateUser" placeholder="Recipient Username" />
+        <div class="cont">
+          <input id="privateInput" placeholder="Private Message" />
+          <button class="sendPrivate" id="sendPrivateMessage">Send Private Message</button>  
+        </div>
+      </div>
+
+      <div id="broadcastMessage">
+        <div class="cont">
+          <input id="broadcastInput" placeholder="Enter a message to broadcast" />
+          <button class="sendPrivate" id="sendBroadcastMessage">Send to All Users</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <h3>Messages:</h3>
+      <ul id="messages"></ul>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let username = '';
+
+    // Set Username
+    document.getElementById('setUsernameButton').addEventListener('click', () => {
+      const input = document.getElementById('usernameInput').value.trim();
+      if (input) {
+        username = input;
+        socket.emit('set username', username);
+        document.getElementById('setUsername').style.display = 'none';
+      } else {
+        alert('Please set a username before sending messages.');
+      }
+    });
+
+    // Update User List
+    socket.on('update users', (userList) => {
+      const usersListElement = document.getElementById('users');
+      usersListElement.innerHTML = '';
+      userList.forEach((user) => {
+        const li = document.createElement('li');
+        li.textContent = user;
+        li.onclick = () => {
+          document.getElementById('privateUser').value = user;
+          document.getElementById('fileRecipient').value = user;
+        };
+        usersListElement.appendChild(li);
+      });
+    });
+
+    // Display Chat Message
+    socket.on('chat message', (data) => {
+      const { from, message } = data;
+      const li = document.createElement('li');
+      li.textContent = `${from}: ${message}`;
+      document.getElementById('messages').appendChild(li);
+    });
+
+    // Display Private Message
+    socket.on('private message', (data) => {
+      const { from, message } = data;
+      const li = document.createElement('li');
+      li.textContent = `Private message from ${from}: ${message}`;
+      document.getElementById('messages').appendChild(li);
+    });
+
+    // Display Broadcast Message
+    socket.on('broadcast message', (data) => {
+      const { from, message } = data;
+      const li = document.createElement('li');
+      li.textContent = `Broadcast message from ${from}: ${message}`;
+      document.getElementById('messages').appendChild(li);
+    });
+
+    // Handle File Upload
+    socket.on('file upload', (data) => {
+      const { from, filename, fileType, content, isPrivate } = data;
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `data:${fileType};base64,${content}`;
+      link.download = filename;
+      link.textContent = `${isPrivate ? 'Private' : 'Broadcast'} file from ${from}: ${filename}`;
+      li.appendChild(link);
+      document.getElementById('messages').appendChild(li);
+    });
+
+    // Send Private Message
+    document.getElementById('sendPrivateMessage').addEventListener('click', () => {
+      const to = document.getElementById('privateUser').value;
+      const message = document.getElementById('privateInput').value;
+      if (to && message && username) {
+        socket.emit('private message', { to, message });
+        document.getElementById('privateInput').value = ''; // Clear the input field
+      }
+    });
+
+    // Send Broadcast Message
+    document.getElementById('sendBroadcastMessage').addEventListener('click', () => {
+      const message = document.getElementById('broadcastInput').value.trim();
+      if (message && username) {
+        socket.emit('broadcast message', message);
+        document.getElementById('broadcastInput').value = '';
+      }
+    });
+
+    // Send File
+    document.getElementById('sendFile').addEventListener('click', () => {
+      const fileInput = document.getElementById('fileInput');
+      const recipient = document.getElementById('fileRecipient').value.trim();
+      if (fileInput.files.length && username) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          const content = reader.result.split(',')[1];
+          socket.emit('file upload', {
+            filename: file.name,
+            fileType: file.type,
+            content,
+            to: recipient,
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
